@@ -19,6 +19,36 @@ body{
     min-height:100vh;
 }
 
+/* 🔥 開場法天相地虛影 */
+#introOverlay{
+    position:fixed;
+    inset:0;
+    background:
+        linear-gradient(rgba(0,0,0,.6),rgba(0,0,0,.85)),
+        url("temple.jpg");
+    background-size:cover;
+    background-position:center;
+    z-index:9999;
+    animation:introFade 1.2s ease forwards;
+}
+
+@keyframes introFade{
+    0%{
+        transform:scale(1.25);
+        filter:blur(10px);
+        opacity:1;
+    }
+    60%{
+        filter:blur(3px);
+    }
+    100%{
+        transform:scale(1);
+        filter:blur(0);
+        opacity:0;
+        visibility:hidden;
+    }
+}
+
 .container{
     width:100%;
     max-width:500px;
@@ -122,6 +152,10 @@ button:active{
 </head>
 
 <body>
+
+<!-- 🔥 開場虛影層 -->
+<div id="introOverlay"></div>
+
 <div class="container">
 
 <h1 id="mainTitle">十二虎 賽特II數據勝率房</h1>
