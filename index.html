@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title id="pageTitle">十二虎 賽特II數據勝率房</title>
+
+<style>
+body{
+    font-family:"Microsoft JhengHei",Arial,sans-serif;
+    background:
+        linear-gradient(rgba(0,0,0,.75),rgba(0,0,0,.95)),
+        url("temple.jpg");
+    background-size:cover;
+    background-position:center;
+    margin:0;
+    padding:15px;
+    color:#fff;
+    min-height:100vh;
+}
+
+.container{
+    width:100%;
+    max-width:500px;
+    margin:auto;
+    text-align:center;
+}
+
+h1{
+    color:#ffd700;
+    font-size:22px;
+    text-shadow:0 0 10px rgba(255,215,0,.6);
+}
+
+.buttons{
+    margin:15px 0;
+}
+
+button{
+    width:100%;
+    margin:8px 0;
+    padding:14px;
+    font-size:18px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    background:linear-gradient(135deg,#ff3333,#7a0000);
+    color:#fff;
+}
+
+button:active{
+    transform:scale(0.97);
+}
+
+.loading{
+    color:#ff5555;
+    font-size:20px;
+    margin:15px 0;
+    animation:blink 1.5s infinite;
+}
+
+@keyframes blink{
+    from{opacity:.5}
+    to{opacity:1}
+}
+
+.success{
+    color:#00ff99;
+    margin-bottom:15px;
+    font-size:18px;
+}
+
+.slot-container{
+    display:none;
+    grid-template-columns:1fr;
+    gap:12px;
+}
+
+.slot{
+    background:rgba(15,15,15,.95);
+    border-radius:12px;
+    padding:16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    opacity:0;
+    transform:translateY(20px);
+    transition:.4s;
+    border:1px solid #333;
+    font-size:18px;
+}
+
+.slot.show{
+    opacity:1;
+    transform:none;
+}
+
+.highest{
+    border:2px solid #ff2222;
+    box-shadow:0 0 20px rgba(255,0,0,.8);
+    animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+    50%{transform:scale(1.04)}
+}
+
+.high{
+    border:2px solid #ffd700;
+    box-shadow:0 0 15px rgba(255,215,0,.7);
+}
+
+.room{
+    color:#ffd700;
+    font-weight:bold;
+}
+
+.rate{
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1 id="mainTitle">十二虎 賽特II數據勝率房</h1>
+
+<div class="buttons">
+    <button onclick="regenerate()">🔄 數據分析中</button>
+    <button onclick="toggleVer()">🔁 切換 I / II</button>
+</div>
+
+<div id="loading" class="loading">猛虎下山中…</div>
+<div id="success" class="success" style="display:none;">獵殺完成</div>
+<div id="slots" class="slot-container"></div>
+
+</div>
+
+<audio id="clickSound" preload="auto">
+    <source src="click.wav" type="audio/mpeg">
+</audio>
+
+<script>
+let version="II";
+
+function playClick(){
+    const sound = document.getElementById("clickSound");
+    if(!sound) return;
+    sound.pause();
+    sound.currentTime = 0;
+    sound.play().catch(()=>{});
+}
+
+function randRoom(){ 
+    return Math.floor(Math.random()*2500)+1; 
+}
+
+function shuffle(a){return a.sort(()=>Math.random()-.5);}
+
+function generateData(){
+    let arr=[];
+    for(let i=0;i<3;i++){
+        arr.push({room:randRoom(),rate:85+Math.floor(Math.random()*11),type:"highest"});
+    }
+    for(let i=0;i<7;i++){
+        arr.push({room:randRoom(),rate:75+Math.floor(Math.random()*10),type:"high"});
+    }
+    while(arr.length<30){
+        arr.push({room:randRoom(),rate:50+Math.floor(Math.random()*25),type:""});
+    }
+    return [...arr.slice(0,3),...shuffle(arr.slice(3))];
+}
+
+function generate(){
+    const box=document.getElementById("slots");
+    box.innerHTML="";
+    box.style.display="grid";
+    const data=generateData();
+    let i=0;
+
+    function next(){
+        if(i>=data.length)return;
+        const d=data[i];
+        const div=document.createElement("div");
+        div.className="slot "+d.type;
+        div.innerHTML=`<span class="room">第 ${d.room} 房</span><span class="rate">${d.rate}%</span>`;
+        box.appendChild(div);
+        setTimeout(()=>div.classList.add("show"),30);
+        i++;
+        setTimeout(next,60);
+    }
+    next();
+}
+
+function regenerate(){
+    playClick();
+    loading.style.display="block";
+    success.style.display="none";
+    slots.style.display="none";
+
+    setTimeout(()=>{
+        loading.style.display="none";
+        success.style.display="block";
+        generate();
+    },1000);
+}
+
+function toggleVer(){
+    playClick();
+    version=version==="II"?"I":"II";
+    const text=`十二虎專屬賽特${version}數據勝率房`;
+    mainTitle.innerText=text;
+    pageTitle.innerText=text;
+    regenerate();
+}
+
+window.onload=regenerate;
+</script>
+
+</body>
+</html>
